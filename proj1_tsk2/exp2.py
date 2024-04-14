@@ -78,8 +78,8 @@ def do_knn(x_train, y_train, x_test):
         accuracy = accuracy_score(y_test, y_pred)
         accuracies_arr.append(accuracy)
         i += 1
-
-    return n_neighbours_arr, accuracies_arr
+    conf_mtrx = confusion_matrix(y_test, y_pred) #use y_test instead of y_true to provide correct array size
+    return n_neighbours_arr, accuracies_arr, conf_mtrx
 
 
 def test_accuracy(X_test, y_test, model):
@@ -101,10 +101,11 @@ if __name__ == "__main__":
     for file in files:
         X, y_true = load(file)
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y_true, test_size=0.2, train_size=0.8, random_state=42)
-
         # KNN
-        n_neighbours_arr, accuracies_arr = do_knn(X_train, y_train, X_test)
-        print(n_neighbours_arr)
-        print("************")
-        print(accuracies_arr)
-        print("---------------------------")
+        n_neighbours_arr, accuracies_arr, conf_mtrx = do_knn(X_train, y_train, X_test)
+        
+        # print("++++++++++++++++" + file + "++++++++++++++++++")
+        # print(n_neighbours_arr)
+        # print("************")
+        # print(accuracies_arr)
+        # print("---------------------------")
