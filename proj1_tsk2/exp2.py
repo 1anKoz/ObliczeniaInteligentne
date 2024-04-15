@@ -85,12 +85,12 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
 
         n_neighbours_arr.append(i)
         i += 1
-    # conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
-    # conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
-    # print("*Train: ")
-    # print(conf_mtrx_trn)
-    # print("*Test: ")
-    # print(conf_mtrx_tst)
+    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    print("*Train: ")
+    print(conf_mtrx_trn)
+    print("*Test: ")
+    print(conf_mtrx_tst)
     return n_neighbours_arr, acc_trn_arr, acc_tst_arr, knn_arr
 
 def do_svc(x_trn, x_tst, y_trn, y_tst):
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y_true, test_size=0.2, train_size=0.8, random_state=42)
         
     # KNN
-        print("Confusion matrix for: " + file)
+        print("kNN confusion\nmatrix for: " + file)
         n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array, model_knn_array = do_knn(X_train, X_test, y_train, y_test)
 
         plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
@@ -173,16 +173,25 @@ if __name__ == "__main__":
         worst_knn_model = model_knn_array[index_of_min_acc]
 
         visualize_decision_boundary_2D(X, best_knn_model, y_true, "kNN BEST decision boundary for: " + file)
-        visualize_decision_boundary_2D(X, worst_knn_model, y_true, "kNN worst decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_knn_model, y_true, "kNN WORST decision boundary for: " + file)
 
         
     # SVC
-        # print("Confusion matrix for: " + file)
-        # log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
+        print("SVC confusion\nmatrix for: " + file)
+        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
 
-        # plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
-        # plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
-        # plt.legend(["training accuracy", "test accuracy"])
-        # plt.xlabel("log(c)")
-        # plt.title("SVC for " + file)
-        # plt.show()
+        plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
+        plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("log(c)")
+        plt.title("SVC for " + file)
+        plt.show()
+
+        index_of_max_acc = np.argmax(svc_accuracy_test_array)
+        best_svc_model = model_svc_array[index_of_max_acc]
+
+        index_of_min_acc = np.argmin(svc_accuracy_test_array)
+        worst_svc_model = model_svc_array[index_of_min_acc]
+
+        visualize_decision_boundary_2D(X, best_svc_model, y_true, "SVC BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_svc_model, y_true, "SVC WORST decision boundary for: " + file)
