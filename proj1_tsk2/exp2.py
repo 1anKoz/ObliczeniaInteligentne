@@ -66,32 +66,41 @@ def do_svc(my_kernel, my_c, X_train, y_train):
     model = model.fit(X_train, y_train)
     return model
 
-def do_knn(x_train, y_train, x_test):
+def do_knn(x_trn, x_tst, y_trn, y_tst):
     n_neighbours_arr = []
-    accuracies_arr = []
+    acc_trn_arr = []
+    acc_tst_arr = []
     i = 1
     while ( i <= 15 ):
         n_neighbours_arr.append(i)
         knn = KNeighborsClassifier(n_neighbors = i)
-        knn.fit(x_train, y_train)
-        y_pred = knn.predict(x_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        accuracies_arr.append(accuracy)
+        knn.fit(x_trn, y_trn)
+        y_pred_trn = knn.predict(x_trn)
+        y_pred_tst = knn.predict(x_tst)
+        acc_trn = accuracy_score(y_trn, y_pred_trn)
+        acc_tst = accuracy_score(y_test, y_pred_tst)
+        acc_trn_arr.append(acc_trn)
+        acc_tst_arr.append(acc_tst)
         i += 1
-    conf_mtrx = confusion_matrix(y_test, y_pred) #use y_test instead of y_true to provide correct array size
-    return n_neighbours_arr, accuracies_arr, conf_mtrx
+    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    print("Confusion matrix train: ")
+    print(conf_mtrx_trn)
+    print("Confusion matrix test: ")
+    print(conf_mtrx_tst)
+    return n_neighbours_arr, acc_trn_arr, acc_tst_arr#, conf_mtrx_trn, conf_mtrx_tst
 
 
-def test_accuracy(X_test, y_test, model):
-    correct = 0
-    for k in range(len(X_test)):
-        val = model.predict(X_test[k].reshape(1, -1))
-        correct_option = y_test[k]
+# def test_accuracy(X_test, y_test, model):
+#     correct = 0
+#     for k in range(len(X_test)):
+#         val = model.predict(X_test[k].reshape(1, -1))
+#         correct_option = y_test[k]
 
-        if val == correct_option:
-            correct = correct + 1
+#         if val == correct_option:
+#             correct = correct + 1
 
-    return correct/len(X_test)
+#     return correct/len(X_test)
 
 
 
@@ -102,8 +111,12 @@ if __name__ == "__main__":
         X, y_true = load(file)
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y_true, test_size=0.2, train_size=0.8, random_state=42)
         # KNN
-        n_neighbours_arr, accuracies_arr, conf_mtrx = do_knn(X_train, y_train, X_test)
+        n_neighbours_arr, accuracy_training_array, accuracy_test_array = do_knn(X_train, X_test, y_train, y_test)
+
+        plt.plot(n_neighbours_arr, accuracy_training_array, color = 'r')
+        plt.plot(n_neighbours_arr, accuracy_test_array, color = 'b')
         
+        plt.show()
         # print("++++++++++++++++" + file + "++++++++++++++++++")
         # print(n_neighbours_arr)
         # print("************")
