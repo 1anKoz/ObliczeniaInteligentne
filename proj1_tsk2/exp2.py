@@ -1,5 +1,7 @@
 import numpy as np
 
+import math
+
 from sklearn import cluster
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
@@ -60,11 +62,6 @@ def do_mlp(my_layer_sizes, my_activation, X_train, y_train, filename):
         model = model.fit(X_train, y_train)
         pickle.dump(model, open(file_path, 'wb'))
         return model
-    
-def do_svc(my_kernel, my_c, X_train, y_train):
-    model = sklearn.svm.SVC(C=my_c, kernel=my_kernel)
-    model = model.fit(X_train, y_train)
-    return model
 
 def do_knn(x_trn, x_tst, y_trn, y_tst):
     n_neighbours_arr = []
@@ -72,15 +69,18 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
     acc_tst_arr = []
     i = 1
     while ( i <= 15 ):
-        n_neighbours_arr.append(i)
         knn = KNeighborsClassifier(n_neighbors = i)
         knn.fit(x_trn, y_trn)
+
         y_pred_trn = knn.predict(x_trn)
         y_pred_tst = knn.predict(x_tst)
+
         acc_trn = accuracy_score(y_trn, y_pred_trn)
         acc_tst = accuracy_score(y_test, y_pred_tst)
         acc_trn_arr.append(acc_trn)
         acc_tst_arr.append(acc_tst)
+
+        n_neighbours_arr.append(i)
         i += 1
     conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
     conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
@@ -90,17 +90,56 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
     print(conf_mtrx_tst)
     return n_neighbours_arr, acc_trn_arr, acc_tst_arr#, conf_mtrx_trn, conf_mtrx_tst
 
+def do_svc(x_trn, x_tst, y_trn, y_tst):
+    log_c_arr = []
+    acc_trn_arr = []
+    acc_tst_arr = []
 
-# def test_accuracy(X_test, y_test, model):
-#     correct = 0
-#     for k in range(len(X_test)):
-#         val = model.predict(X_test[k].reshape(1, -1))
-#         correct_option = y_test[k]
+    log_c = -2.0
+    e = math.e
+    while (log_c <= 6.0):
+        c = math.pow(e, log_c)
 
-#         if val == correct_option:
-#             correct = correct + 1
+        svc = sklearn.svm.SVC(C=c)
+        svc.fit(x_trn, y_trn)
 
-#     return correct/len(X_test)
+        y_pred_trn = svc.predict(x_trn)
+        y_pred_tst = svc.predict(x_tst)
+
+        acc_trn = accuracy_score(y_trn, y_pred_trn)
+        acc_tst = accuracy_score(y_test, y_pred_tst)
+        acc_trn_arr.append(acc_trn)
+        acc_tst_arr.append(acc_tst)
+
+        log_c_arr.append(log_c)
+        log_c += 0.25
+
+    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    print("*Train: ")
+    print(conf_mtrx_trn)
+    print("*Test: ")
+    print(conf_mtrx_tst)
+
+    return log_c_arr, acc_trn_arr, acc_tst_arr
+
+def visualize_decision_boundary_2D(dataset, model, y_true, graph_title):
+    feature_1, feature_2 = np.meshgrid(
+        np.linspace(dataset[:, 0].min(), dataset[:, 0].max()),
+        np.linspace(dataset[:, 1].min(), dataset[:, 1].max())
+    )
+
+    grid = np.vstack([feature_1.ravel(), feature_2.ravel()]).T
+    y_pred = np.reshape(model.predict(grid), feature_1.shape)
+    display = DecisionBoundaryDisplay(
+        xx0=feature_1, xx1=feature_2, response=y_pred
+    )
+    display.plot()
+    display.ax_.scatter(
+        dataset[:, 0], dataset[:, 1], c=y_true, edgecolor="black"
+    )
+    plt.title(graph_title)
+    plt.show()
 
 
 
@@ -113,16 +152,22 @@ if __name__ == "__main__":
         
     # KNN
         print("Confusion matrix for: " + file)
-        n_neighbours_arr, accuracy_training_array, accuracy_test_array = do_knn(X_train, X_test, y_train, y_test)
+        n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array = do_knn(X_train, X_test, y_train, y_test)
 
-        plt.plot(n_neighbours_arr, accuracy_training_array, color = 'r')
-        plt.plot(n_neighbours_arr, accuracy_test_array, color = 'b')
+        plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
+        plt.plot(n_neighbours_arr, knn_accuracy_test_array, color = 'b')
         plt.legend(["training accuracy", "test accuracy"])
         plt.xlabel("n_neighbours")
         plt.title("kNN for " + file)
         plt.show()
-        # print("++++++++++++++++" + file + "++++++++++++++++++")
-        # print(n_neighbours_arr)
-        # print("************")
-        # print(accuracies_arr)
-        # print("---------------------------")
+        
+    # SVC
+        print("Confusion matrix for: " + file)
+        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array = do_svc(X_train, X_test, y_train, y_test)
+
+        plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
+        plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("log(c)")
+        plt.title("SVC for " + file)
+        plt.show()
