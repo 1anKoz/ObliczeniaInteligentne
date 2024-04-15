@@ -67,10 +67,13 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
     n_neighbours_arr = []
     acc_trn_arr = []
     acc_tst_arr = []
+    knn_arr = []
+
     i = 1
     while ( i <= 15 ):
         knn = KNeighborsClassifier(n_neighbors = i)
         knn.fit(x_trn, y_trn)
+        knn_arr.append(knn)
 
         y_pred_trn = knn.predict(x_trn)
         y_pred_tst = knn.predict(x_tst)
@@ -82,18 +85,19 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
 
         n_neighbours_arr.append(i)
         i += 1
-    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
-    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
-    print("*Train: ")
-    print(conf_mtrx_trn)
-    print("*Test: ")
-    print(conf_mtrx_tst)
-    return n_neighbours_arr, acc_trn_arr, acc_tst_arr#, conf_mtrx_trn, conf_mtrx_tst
+    # conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    # conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    # print("*Train: ")
+    # print(conf_mtrx_trn)
+    # print("*Test: ")
+    # print(conf_mtrx_tst)
+    return n_neighbours_arr, acc_trn_arr, acc_tst_arr, knn_arr
 
 def do_svc(x_trn, x_tst, y_trn, y_tst):
     log_c_arr = []
     acc_trn_arr = []
     acc_tst_arr = []
+    svc_arr = []
 
     log_c = -2.0
     e = math.e
@@ -102,6 +106,7 @@ def do_svc(x_trn, x_tst, y_trn, y_tst):
 
         svc = sklearn.svm.SVC(C=c)
         svc.fit(x_trn, y_trn)
+        svc_arr.append(svc)
 
         y_pred_trn = svc.predict(x_trn)
         y_pred_tst = svc.predict(x_tst)
@@ -121,7 +126,7 @@ def do_svc(x_trn, x_tst, y_trn, y_tst):
     print("*Test: ")
     print(conf_mtrx_tst)
 
-    return log_c_arr, acc_trn_arr, acc_tst_arr
+    return log_c_arr, acc_trn_arr, acc_tst_arr, svc_arr
 
 def visualize_decision_boundary_2D(dataset, model, y_true, graph_title):
     feature_1, feature_2 = np.meshgrid(
@@ -152,7 +157,7 @@ if __name__ == "__main__":
         
     # KNN
         print("Confusion matrix for: " + file)
-        n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array = do_knn(X_train, X_test, y_train, y_test)
+        n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array, model_knn_array = do_knn(X_train, X_test, y_train, y_test)
 
         plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
         plt.plot(n_neighbours_arr, knn_accuracy_test_array, color = 'b')
@@ -160,14 +165,24 @@ if __name__ == "__main__":
         plt.xlabel("n_neighbours")
         plt.title("kNN for " + file)
         plt.show()
+
+        index_of_max_acc = np.argmax(knn_accuracy_test_array)
+        best_knn_model = model_knn_array[index_of_max_acc]
+
+        index_of_min_acc = np.argmin(knn_accuracy_test_array)
+        worst_knn_model = model_knn_array[index_of_min_acc]
+
+        visualize_decision_boundary_2D(X, best_knn_model, y_true, "kNN BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_knn_model, y_true, "kNN worst decision boundary for: " + file)
+
         
     # SVC
-        print("Confusion matrix for: " + file)
-        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array = do_svc(X_train, X_test, y_train, y_test)
+        # print("Confusion matrix for: " + file)
+        # log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
 
-        plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
-        plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
-        plt.legend(["training accuracy", "test accuracy"])
-        plt.xlabel("log(c)")
-        plt.title("SVC for " + file)
-        plt.show()
+        # plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
+        # plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
+        # plt.legend(["training accuracy", "test accuracy"])
+        # plt.xlabel("log(c)")
+        # plt.title("SVC for " + file)
+        # plt.show()
