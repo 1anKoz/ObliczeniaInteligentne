@@ -115,7 +115,9 @@ if __name__ == "__main__":
 
         plt.plot(n_neighbours_arr, accuracy_training_array, color = 'r')
         plt.plot(n_neighbours_arr, accuracy_test_array, color = 'b')
-        
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("n_neighbours")
+        plt.title("kNN for " + file)
         plt.show()
         # print("++++++++++++++++" + file + "++++++++++++++++++")
         # print(n_neighbours_arr)
