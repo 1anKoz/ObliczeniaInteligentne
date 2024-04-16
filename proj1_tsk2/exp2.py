@@ -62,7 +62,7 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
     my_layer_sizes = []
     i = 2
     while(i <= 60):
-        print(i)
+        #print(i)
         # file_path = ".\saved_models\MLP_" + filename + "_" + str(my_layer_sizes) + "_" + "relu" + ".sav"
         # try:
         #     loaded_model = pickle.load(open(file_path, 'rb'))
@@ -85,6 +85,13 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
         #pickle.dump(mlp_tst, open(file_path, 'wb'))
         my_layer_sizes.append(i)
         i += 4
+
+    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    print("*Train: ")
+    print(conf_mtrx_trn)
+    print("*Test: ")
+    print(conf_mtrx_tst)
     return my_layer_sizes, acc_trn_arr, acc_tst_arr, mlp_arr
 
 def do_knn(x_trn, x_tst, y_trn, y_tst):
@@ -201,27 +208,28 @@ if __name__ == "__main__":
 
         
     # SVC
-        print("SVC confusion\nmatrix for: " + file)
-        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
+        # print("SVC confusion\nmatrix for: " + file)
+        # log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
 
-        index_of_max_acc = np.argmax(svc_accuracy_test_array)
-        best_svc_model = model_svc_array[index_of_max_acc]
-        first_svc_model = model_svc_array[0]
-        last_svc_model = model_svc_array[len(svc_accuracy_test_array) - 1]
+        # index_of_max_acc = np.argmax(svc_accuracy_test_array)
+        # best_svc_model = model_svc_array[index_of_max_acc]
+        # first_svc_model = model_svc_array[0]
+        # last_svc_model = model_svc_array[len(svc_accuracy_test_array) - 1]
 
-        plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
-        plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
-        plt.legend(["training accuracy", "test accuracy"])
-        plt.xlabel("log(c)")
-        plt.title("SVC for " + file + ". Max acc: " + str(svc_accuracy_test_array[index_of_max_acc]) + " for 'C': " + str(math.pow(math.e, log_c_array[index_of_max_acc])))
-        plt.show()
+        # plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
+        # plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
+        # plt.legend(["training accuracy", "test accuracy"])
+        # plt.xlabel("log(c)")
+        # plt.title("SVC for " + file + ". Max acc: " + str(svc_accuracy_test_array[index_of_max_acc]) + " for 'C': " + str(math.pow(math.e, log_c_array[index_of_max_acc])))
+        # plt.show()
 
-        visualize_decision_boundary_2D(X, best_svc_model, y_true, "SVC BEST decision boundary for: " + file)
-        visualize_decision_boundary_2D(X, first_svc_model, y_true, "SVC FIRST decision boundary for: " + file)
-        visualize_decision_boundary_2D(X, last_svc_model, y_true, "SVC LAST decision boundary for: " + file)
+        # visualize_decision_boundary_2D(X, best_svc_model, y_true, "SVC BEST decision boundary for: " + file)
+        # visualize_decision_boundary_2D(X, first_svc_model, y_true, "SVC FIRST decision boundary for: " + file)
+        # visualize_decision_boundary_2D(X, last_svc_model, y_true, "SVC LAST decision boundary for: " + file)
 
 
     #MLP
+        print("MLP confusion\nmatrix for: " + file)
         n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
 
         index_of_max_acc = np.argmax(mlp_accuracy_test_array)
