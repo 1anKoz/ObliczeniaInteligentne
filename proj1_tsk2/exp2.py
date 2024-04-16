@@ -52,7 +52,7 @@ def load(path):
     ys = full_array[:,(size - 1):]
     return exes, np.ravel(ys)
 
-def do_mlp(x_trn, x_tst, y_trn, y_tst, filename):
+def do_mlp(x_trn, x_tst, y_trn, y_tst):
 
     acc_trn_arr = []
     acc_tst_arr = []
@@ -224,6 +224,6 @@ if __name__ == "__main__":
         plt.plot(n_of_neurons_array, mlp_accuracy_trn_arr, color = 'r')
         plt.plot(n_of_neurons_array, mlp_accuracy_tst_arr, color = 'b')
         plt.legend(["training accuracy", "test accuracy"])
-        plt.xlabel("log(c)")
-        plt.title("SVC for " + file)
+        plt.xlabel("n of neurons")
+        plt.title("MLP for " + file)
         plt.show()
