@@ -61,7 +61,7 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
 
     my_layer_sizes = []
     i = 2
-    while(i <= 10):
+    while(i <= 60):
         print(i)
         # file_path = ".\saved_models\MLP_" + filename + "_" + str(my_layer_sizes) + "_" + "relu" + ".sav"
         # try:
@@ -85,6 +85,13 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
         #pickle.dump(mlp_tst, open(file_path, 'wb'))
         my_layer_sizes.append(i)
         i += 4
+
+    conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    print("*Train: ")
+    print(conf_mtrx_trn)
+    print("*Test: ")
+    print(conf_mtrx_tst)
     return my_layer_sizes, acc_trn_arr, acc_tst_arr, mlp_arr
 
 def do_knn(x_trn, x_tst, y_trn, y_tst):
@@ -109,6 +116,7 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
 
         n_neighbours_arr.append(i)
         i += 1
+
     conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
     conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
     print("*Train: ")
@@ -180,61 +188,62 @@ if __name__ == "__main__":
         X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y_true, test_size=0.2, train_size=0.2, random_state=42)
         
     # KNN
-        # print("kNN confusion\nmatrix for: " + file)
-        # n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array, model_knn_array = do_knn(X_train, X_test, y_train, y_test)
+        print("kNN confusion\nmatrix for: " + file)
+        n_neighbours_arr, knn_accuracy_training_array, knn_accuracy_test_array, model_knn_array = do_knn(X_train, X_test, y_train, y_test)
 
-        # plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
-        # plt.plot(n_neighbours_arr, knn_accuracy_test_array, color = 'b')
-        # plt.legend(["training accuracy", "test accuracy"])
-        # plt.xlabel("n_neighbours")
-        # plt.title("kNN for " + file)
-        # plt.show()
+        plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
+        plt.plot(n_neighbours_arr, knn_accuracy_test_array, color = 'b')
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("n_neighbours")
+        plt.title("kNN for " + file)
+        plt.show()
 
-        # index_of_max_acc = np.argmax(knn_accuracy_test_array)
-        # best_knn_model = model_knn_array[index_of_max_acc]
+        index_of_max_acc = np.argmax(knn_accuracy_test_array)
+        best_knn_model = model_knn_array[index_of_max_acc]
 
-        # index_of_min_acc = np.argmin(knn_accuracy_test_array)
-        # worst_knn_model = model_knn_array[index_of_min_acc]
+        index_of_min_acc = np.argmin(knn_accuracy_test_array)
+        worst_knn_model = model_knn_array[index_of_min_acc]
 
-        # visualize_decision_boundary_2D(X, best_knn_model, y_true, "kNN BEST decision boundary for: " + file)
-        # visualize_decision_boundary_2D(X, worst_knn_model, y_true, "kNN WORST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, best_knn_model, y_true, "kNN BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_knn_model, y_true, "kNN WORST decision boundary for: " + file)
 
         
     # SVC
-        # print("SVC confusion\nmatrix for: " + file)
-        # log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
+        print("SVC confusion\nmatrix for: " + file)
+        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
 
-        # plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
-        # plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
-        # plt.legend(["training accuracy", "test accuracy"])
-        # plt.xlabel("log(c)")
-        # plt.title("SVC for " + file)
-        # plt.show()
+        plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
+        plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("log(c)")
+        plt.title("SVC for " + file)
+        plt.show()
 
-        # index_of_max_acc = np.argmax(svc_accuracy_test_array)
-        # best_svc_model = model_svc_array[index_of_max_acc]
+        index_of_max_acc = np.argmax(svc_accuracy_test_array)
+        best_svc_model = model_svc_array[index_of_max_acc]
 
-        # index_of_min_acc = np.argmin(svc_accuracy_test_array)
-        # worst_svc_model = model_svc_array[index_of_min_acc]
+        index_of_min_acc = np.argmin(svc_accuracy_test_array)
+        worst_svc_model = model_svc_array[index_of_min_acc]
 
-        # visualize_decision_boundary_2D(X, best_svc_model, y_true, "SVC BEST decision boundary for: " + file)
-        # visualize_decision_boundary_2D(X, worst_svc_model, y_true, "SVC WORST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, best_svc_model, y_true, "SVC BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_svc_model, y_true, "SVC WORST decision boundary for: " + file)
 
     #MLP
-        # n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
+        print("MLP confusion\nmatrix for: " + file)
+        n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
 
-        # plt.plot(n_of_neurons_array, mlp_accuracy_train_array, color = 'r')
-        # plt.plot(n_of_neurons_array, mlp_accuracy_test_array, color = 'b')
-        # plt.legend(["training accuracy", "test accuracy"])
-        # plt.xlabel("n of neurons")
-        # plt.title("MLP for " + file)
-        # plt.show()
+        plt.plot(n_of_neurons_array, mlp_accuracy_train_array, color = 'r')
+        plt.plot(n_of_neurons_array, mlp_accuracy_test_array, color = 'b')
+        plt.legend(["training accuracy", "test accuracy"])
+        plt.xlabel("n of neurons")
+        plt.title("MLP for " + file)
+        plt.show()
 
-        # index_of_max_acc = np.argmax(mlp_accuracy_test_array)
-        # best_mlp_model = model_mlp_array[index_of_max_acc]
+        index_of_max_acc = np.argmax(mlp_accuracy_test_array)
+        best_mlp_model = model_mlp_array[index_of_max_acc]
 
-        # index_of_min_acc = np.argmin(mlp_accuracy_test_array)
-        # worst_mlp_model = model_mlp_array[index_of_min_acc]
+        index_of_min_acc = np.argmin(mlp_accuracy_test_array)
+        worst_mlp_model = model_mlp_array[index_of_min_acc]
 
-        # visualize_decision_boundary_2D(X, best_mlp_model, y_true, "MLP BEST decision boundary for: " + file)
-        # visualize_decision_boundary_2D(X, worst_mlp_model, y_true, "MLP WORST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, best_mlp_model, y_true, "MLP BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_mlp_model, y_true, "MLP WORST decision boundary for: " + file)
