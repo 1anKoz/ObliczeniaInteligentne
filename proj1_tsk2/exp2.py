@@ -61,7 +61,7 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
 
     my_layer_sizes = []
     i = 2
-    while(i <= 60):
+    while(i <= 10):
         print(i)
         # file_path = ".\saved_models\MLP_" + filename + "_" + str(my_layer_sizes) + "_" + "relu" + ".sav"
         # try:
@@ -221,11 +221,20 @@ if __name__ == "__main__":
         # visualize_decision_boundary_2D(X, worst_svc_model, y_true, "SVC WORST decision boundary for: " + file)
 
     #MLP
-        n_of_neurons_array, mlp_accuracy_trn_arr, mlp_accuracy_tst_arr, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
+        n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
 
-        plt.plot(n_of_neurons_array, mlp_accuracy_trn_arr, color = 'r')
-        plt.plot(n_of_neurons_array, mlp_accuracy_tst_arr, color = 'b')
+        plt.plot(n_of_neurons_array, mlp_accuracy_train_array, color = 'r')
+        plt.plot(n_of_neurons_array, mlp_accuracy_test_array, color = 'b')
         plt.legend(["training accuracy", "test accuracy"])
         plt.xlabel("n of neurons")
         plt.title("MLP for " + file)
         plt.show()
+
+        index_of_max_acc = np.argmax(mlp_accuracy_test_array)
+        best_mlp_model = model_mlp_array[index_of_max_acc]
+
+        index_of_min_acc = np.argmin(mlp_accuracy_test_array)
+        worst_mlp_model = model_mlp_array[index_of_min_acc]
+
+        visualize_decision_boundary_2D(X, best_mlp_model, y_true, "MLP BEST decision boundary for: " + file)
+        visualize_decision_boundary_2D(X, worst_mlp_model, y_true, "MLP WORST decision boundary for: " + file)
