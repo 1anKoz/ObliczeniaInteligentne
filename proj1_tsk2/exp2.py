@@ -13,6 +13,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.datasets import load_breast_cancer, load_wine, load_iris
 from sklearn.neural_network import MLPClassifier
 
+
 import matplotlib.pyplot as plt
 import matplotlib
 from scipy.spatial import Voronoi, voronoi_plot_2d
@@ -59,15 +60,16 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
     mlp_arr = []
 
     my_layer_sizes = []
-    i = 0
-    while(i <= 200):
+    i = 2
+    while(i <= 60):
+        print(i)
         # file_path = ".\saved_models\MLP_" + filename + "_" + str(my_layer_sizes) + "_" + "relu" + ".sav"
         # try:
         #     loaded_model = pickle.load(open(file_path, 'rb'))
         #     return loaded_model
         # except:
-        mlp = sklearn.neural_network.MLPClassifier(hidden_layer_sizes=my_layer_sizes, activation="relu", max_iter=100000, tol=0, n_iter_no_change=100000, solver="sgd")
-        mlp.fit(x_trn, y_trn)
+        mlp = MLPClassifier(hidden_layer_sizes = i, activation="relu", max_iter=100000, tol=0, n_iter_no_change=100000, solver="sgd")
+        mlp = mlp.fit(x_trn, y_trn)
         mlp_arr.append(mlp)
 
         y_pred_trn = mlp.predict(x_trn)
@@ -82,8 +84,8 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
         # mlp_tst = mlp_tst.fit(x_tst, y_tst)
         #pickle.dump(mlp_tst, open(file_path, 'wb'))
         my_layer_sizes.append(i)
-        i += 25
-        return my_layer_sizes, acc_trn_arr, acc_tst_arr, mlp_arr
+        i += 4
+    return my_layer_sizes, acc_trn_arr, acc_tst_arr, mlp_arr
 
 def do_knn(x_trn, x_tst, y_trn, y_tst):
     n_neighbours_arr = []
