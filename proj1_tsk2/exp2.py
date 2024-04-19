@@ -62,12 +62,7 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
     my_layer_sizes = []
     i = 2
     while(i <= 60):
-        #print(i)
-        # file_path = ".\saved_models\MLP_" + filename + "_" + str(my_layer_sizes) + "_" + "relu" + ".sav"
-        # try:
-        #     loaded_model = pickle.load(open(file_path, 'rb'))
-        #     return loaded_model
-        # except:
+
         mlp = MLPClassifier(hidden_layer_sizes = i, activation="relu", max_iter=100000, tol=0, n_iter_no_change=100000, solver="sgd")
         mlp = mlp.fit(x_trn, y_trn)
         mlp_arr.append(mlp)
@@ -79,15 +74,11 @@ def do_mlp(x_trn, x_tst, y_trn, y_tst):
         acc_tst = accuracy_score(y_test, y_pred_tst)
         acc_trn_arr.append(acc_trn)
         acc_tst_arr.append(acc_tst)
-        #pickle.dump(mlp_trn, open(file_path, 'wb'))
-        # mlp_tst = sklearn.neural_network.MLPClassifier(hidden_layer_sizes=my_layer_sizes, activation="relu", max_iter=100000, tol=0, n_iter_no_change=100000, solver="sgd")
-        # mlp_tst = mlp_tst.fit(x_tst, y_tst)
-        #pickle.dump(mlp_tst, open(file_path, 'wb'))
         my_layer_sizes.append(i)
         i += 4
 
     conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
-    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst)
     print("*Train: ")
     print(conf_mtrx_trn)
     print("*Test: ")
@@ -119,7 +110,7 @@ def do_knn(x_trn, x_tst, y_trn, y_tst):
         n_neighbours_arr.append(i)
         i += 1
     conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
-    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst)
     print("*Train: ")
     print(conf_mtrx_trn)
     print("*Test: ")
@@ -140,7 +131,7 @@ def do_svc(x_trn, x_tst, y_trn, y_tst):
         c = math.pow(e, log_c)
 
         svc = sklearn.svm.SVC(C=c)
-        svc.fit(x_trn, y_trn)   # rozważyć rozdzielenie tego na svc_trn i svc_tst,
+        svc.fit(x_trn, y_trn)
         svc_arr.append(svc)
 
         y_pred_trn = svc.predict(x_trn)
@@ -155,7 +146,7 @@ def do_svc(x_trn, x_tst, y_trn, y_tst):
         log_c += 0.25
 
     conf_mtrx_trn = confusion_matrix(y_trn, y_pred_trn)
-    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst) #use y_test instead of y_true to provide correct array size
+    conf_mtrx_tst = confusion_matrix(y_tst, y_pred_tst)
     print("*Train: ")
     print(conf_mtrx_trn)
     print("*Test: ")
@@ -200,9 +191,9 @@ if __name__ == "__main__":
         # first_knn_model = model_knn_array[0]
         # last_knn_model = model_knn_array[len(knn_accuracy_test_array) - 1]
 
-        # print("Max accuracy: " + str(knn_accuracy_test_array[index_of_max_acc]) + " for: " + str(file))
-        # print("First accuracy: " + str(knn_accuracy_test_array[0]) + " for: " + str(file))
-        # print("Last accuracy: " + str(knn_accuracy_test_array[len(knn_accuracy_test_array) - 1]) + " for: " + str(file))
+        # print("Max accuracy: " + str(round(knn_accuracy_test_array[index_of_max_acc], 2)) + " for: " + str(n_neighbours_arr[index_of_max_acc]) + " neighbours in: " + str(file))
+        # print("First accuracy: " + str(round(knn_accuracy_test_array[0], 2)) + " in: " + str(file))
+        # print("Last accuracy: " + str(round(knn_accuracy_test_array[len(knn_accuracy_test_array) - 1], 2)) + " in: " + str(file))
         # print("---------------------------------------------------------")
 
         # plt.plot(n_neighbours_arr, knn_accuracy_training_array, color = 'r')
@@ -218,18 +209,18 @@ if __name__ == "__main__":
 
         
     # SVC
-        # print("SVC confusion\nmatrix for: " + file)
-        # log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
+        print("SVC confusion\nmatrix for: " + file)
+        log_c_array, svc_accuracy_training_array, svc_accuracy_test_array, model_svc_array = do_svc(X_train, X_test, y_train, y_test)
 
-        # index_of_max_acc = np.argmax(svc_accuracy_test_array)
-        # best_svc_model = model_svc_array[index_of_max_acc]
-        # first_svc_model = model_svc_array[0]
-        # last_svc_model = model_svc_array[len(svc_accuracy_test_array) - 1]
+        index_of_max_acc = np.argmax(svc_accuracy_test_array)
+        best_svc_model = model_svc_array[index_of_max_acc]
+        first_svc_model = model_svc_array[0]
+        last_svc_model = model_svc_array[len(svc_accuracy_test_array) - 1]
 
-        # print("Max accuracy: " + str(svc_accuracy_test_array[index_of_max_acc]) + " for: " + str(file))
-        # print("First accuracy: " + str(svc_accuracy_test_array[0]) + " for: " + str(file))
-        # print("Last accuracy: " + str(svc_accuracy_test_array[len(svc_accuracy_test_array) - 1]) + " for: " + str(file))
-        # print("---------------------------------------------------------")
+        print("Max accuracy: " + str(round(svc_accuracy_test_array[index_of_max_acc], 2)) + " for: " + str(round(math.pow(math.e, log_c_array[index_of_max_acc]), 2)) + " 'C' in: " + str(file))
+        print("First accuracy: " + str(round(svc_accuracy_test_array[0], 2)) + " in: " + str(file))
+        print("Last accuracy: " + str(round(svc_accuracy_test_array[len(svc_accuracy_test_array) - 1], 2)) + " in: " + str(file))
+        print("---------------------------------------------------------")
 
         # plt.plot(log_c_array, svc_accuracy_training_array, color = 'r')
         # plt.plot(log_c_array, svc_accuracy_test_array, color = 'b')
@@ -244,18 +235,18 @@ if __name__ == "__main__":
 
 
     #MLP
-        print("MLP confusion\nmatrix for: " + file)
-        n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
+        # print("MLP confusion\nmatrix for: " + file)
+        # n_of_neurons_array, mlp_accuracy_train_array, mlp_accuracy_test_array, model_mlp_array = do_mlp(X_train, X_test, y_train, y_test)
 
-        index_of_max_acc = np.argmax(mlp_accuracy_test_array)
-        best_mlp_model = model_mlp_array[index_of_max_acc]
-        first_mlp_model = model_mlp_array[0]
-        last_mlp_model = model_mlp_array[len(mlp_accuracy_test_array) - 1]
+        # index_of_max_acc = np.argmax(mlp_accuracy_test_array)
+        # best_mlp_model = model_mlp_array[index_of_max_acc]
+        # first_mlp_model = model_mlp_array[0]
+        # last_mlp_model = model_mlp_array[len(mlp_accuracy_test_array) - 1]
 
-        print("Max accuracy: " + str(mlp_accuracy_test_array[index_of_max_acc]) + " for: " + str(file))
-        print("First accuracy: " + str(mlp_accuracy_test_array[0]) + " for: " + str(file))
-        print("Last accuracy: " + str(mlp_accuracy_test_array[len(mlp_accuracy_test_array) - 1]) + " for: " + str(file))
-        print("---------------------------------------------------------")
+        # print("Max accuracy: " + str(round(mlp_accuracy_test_array[index_of_max_acc], 2)) + " for: " + str(n_of_neurons_array[index_of_max_acc]) + " neurons in: " + str(file))
+        # print("First accuracy: " + str(round(mlp_accuracy_test_array[0], 2)) + " in: " + str(file))
+        # print("Last accuracy: " + str(round(mlp_accuracy_test_array[len(mlp_accuracy_test_array) - 1], 2)) + " in: " + str(file))
+        # print("---------------------------------------------------------")
 
         # plt.plot(n_of_neurons_array, mlp_accuracy_train_array, color = 'r')
         # plt.plot(n_of_neurons_array, mlp_accuracy_test_array, color = 'b')
