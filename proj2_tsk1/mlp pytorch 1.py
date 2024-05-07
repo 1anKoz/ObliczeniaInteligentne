@@ -5,10 +5,11 @@ from tensorflow import keras
 from keras.datasets import mnist
 import pickle
 import numpy as np
+from iris_load import IrisDataset
 
 if __name__ == "__main__":
     #files = [".\encodings\enc_train_2.sav", ".\encodings\enc_train_784.sav", ".\encodings\enc_train_our.sav"]
-    files = [".\encodings\enc_train_2.sav"]
+    files = [".\encodings\iris_train.sav"]
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
     loss_fn = nn.CrossEntropyLoss()
     num_epochs = 300
