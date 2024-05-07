@@ -15,6 +15,7 @@ from sklearn.datasets import load_breast_cancer
 
 if __name__ == "__main__":
     #files = [".\encodings\enc_train_2.sav", ".\encodings\enc_train_784.sav", ".\encodings\enc_train_our.sav"]
+    #(X_train, y_train), (X_test, Y_test) = mnist.load_data()
 
     #files = [".\encodings\iris_train.sav"]
     #X_train, X_test, y_train, y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
@@ -24,8 +25,6 @@ if __name__ == "__main__":
 
     files = [".\encodings\dwbc_train.sav"]
     X_train, X_test, y_train, y_test = train_test_split(load_breast_cancer().data, load_breast_cancer().target, test_size=0.2, random_state=42)
-
-    #(X_train, y_train), (X_test, Y_test) = mnist.load_data()
 
     loss_fn = nn.CrossEntropyLoss()
     num_epochs = 300
