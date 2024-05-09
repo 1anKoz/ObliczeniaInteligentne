@@ -4,6 +4,7 @@ import tensorflow
 from keras.datasets import mnist
 import numpy as np
 import cv2
+import pickle
 
 #compactness, circularity, solidity, edge density, central, horizontal, vertical symmetries, extent
 
@@ -124,18 +125,46 @@ def central_symmetry_score(image):
 
 if __name__ == "__main__":
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-    vector_2 = []
-    vector_8 = []
-    vector_784 = []
-
+    vector_2_ftrs = []
+    vector_8_ftrs = []
+    vector_784_ftrs = []
+    # train data
     ctr = 0
-for x in X_train:
-    vector_2.append([central_symmetry_score(x), edge_density(x)])
-    tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
-    vector_8.append(tmp)
-    ctr = ctr + 1
-    if(ctr == 10): break
+    for x in X_train:
+        vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
+        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
+        vector_8_ftrs.append(tmp)
+        ctr = ctr + 1
+        if(ctr == 10): break
 
-print(vector_2)
-print()
-print(vector_8)
+    file_path = ".\encodings\J_enc_train_2_features.sav"
+    pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
+    file_path = ".\encodings\J_enc_train_8_features.sav"
+    pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
+
+    print(vector_2_ftrs)
+    print()
+    print(vector_8_ftrs)
+    print("-------------------------------------------")
+
+    vector_2_ftrs = []
+    vector_8_ftrs = []
+    vector_784_ftrs = []
+
+    #test data
+    ctr = 0
+    for x in X_test:
+        vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
+        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
+        vector_8_ftrs.append(tmp)
+        ctr = ctr + 1
+        if(ctr == 10): break
+
+    file_path = ".\encodings\J_enc_test_2_features.sav"
+    pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
+    file_path = ".\encodings\J_enc_test_8_features.sav"
+    pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
+
+    print(vector_2_ftrs)
+    print()
+    print(vector_8_ftrs)
