@@ -23,7 +23,7 @@ def extent(image):
     
     if not contours:
         print("No contours found.")
-        return None
+        return 0
     
     largest_contour_area = 0
     largest_contour = None
@@ -35,12 +35,12 @@ def extent(image):
     
     if largest_contour is None:
         print("No valid contour found.")
-        return None
+        return 0
     
     x, y, w, h = cv2.boundingRect(largest_contour)
     if w == 0 or h == 0:  # Avoid division by zero
         print("Bounding box dimensions are zero.")
-        return None
+        return 0
     
     bounding_box_area = w * h
     extent = largest_contour_area / bounding_box_area
@@ -54,7 +54,7 @@ def circularity(image):
     
     if not contours:
         print("No contours found.")
-        return None
+        return 0
     
     largest_contour_area = 0
     largest_contour = None
@@ -66,12 +66,12 @@ def circularity(image):
     
     if largest_contour is None:
         print("No valid contour found.")
-        return None
+        return 0
     
     perimeter = cv2.arcLength(largest_contour, True)
     if perimeter == 0:  # Avoid division by zero
         print("Perimeter is zero.")
-        return None
+        return 0
     
     circularity = (4 * np.pi * largest_contour_area) / (perimeter ** 2)
     
@@ -84,7 +84,7 @@ def compactness(image):
     
     if not contours:
         print("No contours found.")
-        return None
+        return 0
     
     largest_contour_area = 0
     largest_contour = None
@@ -96,24 +96,24 @@ def compactness(image):
     
     if largest_contour is None:
         print("No valid contour found.")
-        return None
+        return 0
     
     perimeter = cv2.arcLength(largest_contour, True)
     if perimeter == 0:  # Avoid division by zero
         print("Perimeter is zero.")
-        return None
+        return 0
     
     compactness = largest_contour_area / (perimeter ** 2)
     
     return int(compactness * 1000)
 
 # Solidity measures the convexity of an object. It is the ratio of the object's area to the area of its convex hull.
-def solidity(image, counter):
+def solidity(image):
     contours, _ = compute_contour(image)
     
     if not contours:
         print("No contours found.")
-        return None
+        return 0
     
     largest_contour_area = 0
     largest_contour = None
@@ -125,17 +125,17 @@ def solidity(image, counter):
     
     if largest_contour is None:
         print("No valid contour found.")
-        return None
+        return 0
 
     hull = cv2.convexHull(largest_contour)
     if len(hull) < 3:  # Convex hull should have at least 3 points
         print("Convex hull is not valid.")
-        return None
+        return 0
     
     hull_area = cv2.contourArea(hull)
     if hull_area == 0:  # Avoid division by zero
         print("Convex hull area is zero.")
-        return None
+        return 0
     
     solidity = largest_contour_area / hull_area
     
@@ -189,7 +189,7 @@ if __name__ == "__main__":
     ctr = 0
     for x in X_test:
         vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
-        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x, ctr), circularity(x), compactness(x), extent(x)]
+        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
         vector_8_ftrs.append(tmp)
         ctr = ctr + 1
         #if(ctr == 10): break
@@ -199,24 +199,37 @@ if __name__ == "__main__":
     file_path = ".\encodings\J_enc_test_8_features.sav"
     pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
 
+    # print("-----------------------------")
+    # print(vector_2_ftrs)
+    # print("-----------------------------")
+    # print(vector_8_ftrs)
+    # print()
+
     print("done test: " + str(ctr))
     
 
-    # vector_2_ftrs = []
-    # vector_8_ftrs = []
-    # vector_784_ftrs = []
-    # # train data
-    # ctr = 0
-    # for x in X_train:
-    #     vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
-    #     tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
-    #     vector_8_ftrs.append(tmp)
-    #     ctr = ctr + 1
-    #     #if(ctr == 10): break
+    vector_2_ftrs = []
+    vector_8_ftrs = []
+    vector_784_ftrs = []
+    # train data
+    ctr = 0
+    for x in X_train:
+        vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
+        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
+        vector_8_ftrs.append(tmp)
+        ctr = ctr + 1
+        #if(ctr == 10): break
 
-    # file_path = ".\encodings\J_enc_train_2_features.sav"
-    # pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
-    # file_path = ".\encodings\J_enc_train_8_features.sav"
-    # pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
+    file_path = ".\encodings\J_enc_train_2_features.sav"
+    pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
+    file_path = ".\encodings\J_enc_train_8_features.sav"
+    pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
 
-    # print("done train: " + ctr)
+    # print("-----------------------------")
+    # print(vector_2_ftrs)
+    # print("-----------------------------")
+    # print(vector_8_ftrs)
+    # print()
+    # print("done test: " + str(ctr))
+
+    print("done train: " + str(ctr))

@@ -7,10 +7,8 @@ import pickle
 import numpy as np
 
 if __name__ == "__main__":
-    files = [".\encodings\enc_train_784.sav", ".\encodings\enc_train_our.sav", ".\encodings\enc_train_2.sav"]
-    #files = [".\encodings\enc_train_our.sav"]
-    #files_test = [".\encodings\enc_test_our.sav"]
-    files_test = [".\encodings\enc_test_784.sav", ".\encodings\enc_test_our.sav", ".\encodings\enc_test_2.sav"]
+    files = [".\encodings\J_enc_train_2_features.sav", ".\encodings\J_enc_train_8_features.sav"]
+    files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
     loss_fn = nn.CrossEntropyLoss()
     num_epochs = 300
@@ -47,7 +45,7 @@ if __name__ == "__main__":
 
             y_test_result = model(X_test_tensor)
             loss = loss_fn(y_test_result, y_test_tensor)
-            #print(loss.item())
+            print(loss.item())
 
             if loss.item() < smallest_loss:
                 best_model = model
