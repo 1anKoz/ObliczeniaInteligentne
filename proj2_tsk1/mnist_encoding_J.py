@@ -5,11 +5,32 @@ from keras.datasets import mnist
 import numpy as np
 import cv2
 
+def compute_contour(image):
+    _, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    return contours, _
+
+def solidity(image):
+    contours, _ = compute_contour(image)
+    
+    largest_contour_area = 0
+    largest_contour = None
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area > largest_contour_area:
+            largest_contour_area = area
+            largest_contour = contour
+    
+    hull = cv2.convexHull(largest_contour)
+    hull_area = cv2.contourArea(hull)
+    solidity = largest_contour_area / hull_area
+    
+    return int(solidity*1000)
+
+#compactness, eccentricity, (circularity), (solidity)
 
 def edge_density(image):
-    # Convert the image to grayscale
-    #gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
     # Apply Canny edge detection
     edges = cv2.Canny(image, 100, 200)  # Adjust thresholds as needed
     
@@ -40,15 +61,14 @@ def central_symmetry_score(image):
 
 if __name__ == "__main__":
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+    vector_2 = []
+    vector_7 = []
+    vector_784 = []
 
     ctr = 0
 for x in X_train:
-    # print(int(horizontal_symmetry_score(x)*1000))
-    # print("**********************************")
-    # print(int(vertical_symmetry_score(x)*1000))
-    # print("----------------------------------")
-    print(central_symmetry_score(x))
-    #print(edge_density(x))
+    #vector_2.append([central_symmetry_score(x), edge_density(x)])
+    print(solidity(x))
     print()
     ctr = ctr + 1
     if(ctr == 10): break
