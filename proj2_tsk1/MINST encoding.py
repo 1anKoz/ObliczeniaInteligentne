@@ -105,6 +105,7 @@ def encoding_our(data):
 def get_MINST_encoded_1(data):
     vector_784 = data.reshape(len(data), 784)
     vector_2, masks = encoding_2(data)
+    print(vector_2)
     vector_our = encoding_our(data)
     return vector_784, vector_2, vector_our
 
@@ -112,10 +113,7 @@ if __name__ == "__main__":
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
 
     vector_784, vector_2, vector_our = get_MINST_encoded_1(X_test)
-    print("**********************")
-    print(vector_2)
-    print("-----------------------------")
-    print(vector_our)
+    
     file_path = ".\encodings\enc_test_784.sav"
     pickle.dump(vector_784, open(file_path, 'wb'))
     file_path = ".\encodings\enc_test_2.sav"
@@ -124,6 +122,7 @@ if __name__ == "__main__":
     pickle.dump(vector_our, open(file_path, 'wb'))
     
     vector_784, vector_2, vector_our = get_MINST_encoded_1(X_train)
+    
     file_path = ".\encodings\enc_train_784.sav"
     pickle.dump(vector_784, open(file_path, 'wb'))
     file_path = ".\encodings\enc_train_2.sav"
