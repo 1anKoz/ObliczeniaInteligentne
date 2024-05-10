@@ -14,39 +14,9 @@ from sklearn.cluster import DBSCAN, KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.datasets import load_breast_cancer, load_wine, load_iris
 
-def loadDWBC():
-    data = load_breast_cancer()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
+from keras.datasets import mnist
+import pickle
 
-def loadIris():
-    data = load_iris()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
-
-def loadWine():
-    data = load_wine()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
-
-def csv_read(path):
-    if path == "cancer":
-        return loadDWBC()
-    if path == "iris":
-        return loadIris()
-    if path == "wine":
-        return loadWine()
-
-    points = pd.read_csv(path, sep = ";", usecols=[0,1])
-    labels = pd.read_csv(path, sep = ";", usecols=[2])
-
-    points_arr = np.array(points)
-    labels_arr = np.array(labels)
-
-    return points_arr, labels_arr
 
 def voronoi_finite_polygons_2d(vor, radius=None):
     new_regions = []
@@ -152,7 +122,7 @@ if __name__ == "__main__":
 
     # reading the data
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-    X_2 = pickle.load(open(".\encodings\enc_test_2.sav", 'rb'))
+    X_2 = pickle.load(open(".\encodings\J_enc_train_2_features.sav", 'rb'))
     # /|\ zmieniać
     points_arr1 = X_2
     true_labels_arr1 = Y_train
@@ -180,15 +150,10 @@ if __name__ == "__main__":
     worst_case1 = np.argmin(sil_score1) + 2
    
     # clustering and voronoi best case
-    #fake_labels_arr1 = clustering_KMeans(points_arr1, best_case1)
+    fake_labels_arr1 = clustering_KMeans(points_arr1, best_case1)
    
 
-    title1 = "1_1.csv KMeans best case " + str(best_case1) + " clusters"
-    #plot_voronoi_diagram(points_arr1, true_labels_arr1, fake_labels_arr1, title1)
-    
-    #clustering and voronoi worst case
-    fake_labels_arr1 = clustering_KMeans(points_arr1, worst_case1)
-    
-    title1 = "1_1.csv KMeans worst case " + str(worst_case1) + " clusters"
+    title1 = "Train_2 KMeans best case " + str(best_case1) + " clusters"
     plot_voronoi_diagram(points_arr1, true_labels_arr1, fake_labels_arr1, title1)
+    
     

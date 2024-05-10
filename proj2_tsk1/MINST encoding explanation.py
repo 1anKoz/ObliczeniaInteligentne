@@ -32,7 +32,7 @@ def explain(encoding, num, values):
 
 if __name__ == "__main__":
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-    files = [".\encodings\enc_test_2.sav", ".\encodings\enc_test_our.sav"]
+    files = [".\encodings\J_enc_train_2_features.sav", ".\encodings\J_enc_train_8_features.sav"]
     for set_no in range(len(files)):
         encodings = pickle.load(open(files[set_no], 'rb'))
         show_8 = False

@@ -53,6 +53,7 @@ def silhouette(points_arr, max_n):
         DBSCAN_clusters_array = np.append(DBSCAN_clusters_array, n_of_DBSCAN_clusters)
         DBSCAN_clusters_array = DBSCAN_clusters_array.astype(int)
         i += 0.10
+        print(";")
     return score, DBSCAN_clusters_array
 
 def all_equal(iterable):
@@ -65,9 +66,9 @@ if __name__ == "__main__":
 
     # reading the data
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-    X_test_2 = pickle.load(open(".\encodings\enc_train_2.sav", 'rb'))
+    X_test_2 = pickle.load(open(".\encodings\J_enc_train_8_features.sav", 'rb'))
     # /|\ zmieniać
-
+    print("()()")
 
     # preparing the matrix of epsilons to properly plot a silhouette
     epsilon = 2.00
@@ -84,6 +85,6 @@ if __name__ == "__main__":
     for i, txt in enumerate(n_of_DBSCAN_clusters1):
         ax.annotate(txt, (epsilon_arr[i], sil_score1[i]))
     plt.plot(epsilon_arr, sil_score1, color = 'green', marker = 'o')
-    plt.title("Shilluete score - DBSCAN - 2")
+    plt.title("Shilluete score - DBSCAN - 8")
     plt.xlabel ('eps')
     plt.show()

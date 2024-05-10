@@ -12,6 +12,14 @@ from sklearn.inspection import DecisionBoundaryDisplay
 import sklearn
 import matplotlib.pyplot as plt
 
+from iris_load import IrisDataset
+from wine_load import WineDataset
+from dwbc_load import DwbcDataset
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+from sklearn.datasets import load_wine
+from sklearn.datasets import load_breast_cancer
+
 def visualize_decision_boundary_2D(dataset, model, y_true, graph_title):
     min_0 = 9999999999999999999
     min_1 = 0000000000000000000
@@ -57,9 +65,26 @@ def visualize_decision_boundary_2D(dataset, model, y_true, graph_title):
     plt.show()
 
 if __name__ == "__main__":
-    files = [".\models\mdl_train_784.sav", ".\models\mdl_train_our.sav", ".\models\mdl_train_2.sav"]
-    files_test = [".\encodings\enc_test_784.sav", ".\encodings\enc_test_our.sav", ".\encodings\enc_test_2.sav"]
+    # files = [".\models\mdl_train_784.sav", ".\models\mdl_train_our.sav", ".\models\mdl_train_2.sav"]
+    # files_test = [".\encodings\enc_test_784.sav", ".\encodings\enc_test_our.sav", ".\encodings\enc_test_2.sav"]
+    # (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+
+    files = [".\models\mdl_temp_0", ".\models\mdl_temp_1"]
+    files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+
+    # files = [".\models\iris_train"]
+    # files_test = [".\encodings\iris_test.sav"]
+    # X_train, X_test, Y_train, Y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
+    
+    # files = [".\models\wine_train"]
+    # files_test = [".\encodings\wine_test.sav"]
+    # X_train, X_test, Y_train, Y_test = train_test_split(load_wine().data, load_wine().target, test_size=0.2, random_state=42)
+
+    # files = [".\models\dwbc_train"]
+    # files_test = [".\encodings\dwbc_test.sav"]
+    # X_train, X_test, Y_train, Y_test = train_test_split(load_breast_cancer().data, load_breast_cancer().target, test_size=0.2, random_state=42)
+
     for set_no in range(len(files)):
         model = pickle.load(open(files[set_no], 'rb'))
         model.eval()
@@ -83,7 +108,7 @@ if __name__ == "__main__":
         print("Dokładność:")
         print(acc_tst)
 
-        if "_2" in files[set_no]:
+        if "_0" in files[set_no]:
             visualize_decision_boundary_2D(X_test, model, y_test, "Decision boundry for two element encoding")
 
         

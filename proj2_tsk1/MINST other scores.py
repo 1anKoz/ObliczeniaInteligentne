@@ -18,6 +18,9 @@ from tensorflow import keras
 from keras.datasets import mnist
 from keras.utils import to_categorical
 import pickle
+from sklearn import preprocessing
+
+import os
 
 
 def voronoi_finite_polygons_2d(vor, radius=None):
@@ -78,40 +81,6 @@ def voronoi_finite_polygons_2d(vor, radius=None):
 
     return new_regions, np.asarray(new_vertices)
 
-def loadDWBC():
-    data = load_breast_cancer()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
-
-def loadIris():
-    data = load_iris()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
-
-def loadWine():
-    data = load_wine()
-    ys = data.target
-    exes = data.data
-    return exes, np.ravel(ys)
-
-def load(path):
-    if path == "dwbc":
-        return loadDWBC()
-    if path == "iris":
-        return loadIris()
-    if path == "wine":
-        return loadWine()
-    full_array = np.loadtxt(path, delimiter = ';')
-    size = full_array.shape[1]
-    exes = full_array[:,:(size - 1)]
-    ys = full_array[:,(size - 1):]
-    return exes, np.ravel(ys)
-        
-    
-
-
 def plot_voronoi_diagram(X, y_true, y_pred, title):
     colors = []
     for c in matplotlib.colors.get_named_colors_mapping():
@@ -143,80 +112,22 @@ def plot_voronoi_diagram(X, y_true, y_pred, title):
             plt.scatter(a[0],a[1],color=colors[int(y_true[index])],s=4)
 
     plt.title(title)
+    plt.savefig("./DBSCAN_v.png")
     plt.show()
 
 
 if __name__ == "__main__":
-    files = [".\encodings\enc_train_2.sav", ".\encodings\enc_train_784.sav", ".\encodings\enc_train_our.sav"]
+    #files = [".\encodings\enc_train_784.sav", ".\encodings\enc_train_our.sav", ".\encodings\enc_train_2.sav"]
+    files = [".\encodings\J_enc_train_2_features.sav"]
+    #files = [".\encodings\enc_train_2.sav"]
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
     for set_no in range(len(files)):
         X = pickle.load(open(files[set_no], 'rb'))
+        X = preprocessing.normalize(X)
         y_true = Y_train
    
-    #DBSCAN
-        temp_esp_list = np.linspace(0.1, 2, 20, endpoint=False).tolist()
-        esp_options = [ round(elem, 2) for elem in temp_esp_list ]
-        adjusted_rand_points = []
-        homogeneity_points = []
-        completeness_points = []
-        V_measure5_points = []
-        V_measure1_points = []
-        V_measure2_points = []
-        goodness_score_table = []
-        y_pred_table = []
-        no_clusters_table = []
-        i = 0
-        for option in esp_options:
-            algorithm = DBSCAN(eps=option, min_samples=1)
-            algorithm.fit(X)
-            y_pred = algorithm.labels_.astype(int)
-            adjusted_rand_points.append(sklearn.metrics.adjusted_rand_score(y_true, y_pred))
-            homogeneity_points.append(sklearn.metrics.homogeneity_score(y_true, y_pred))
-            completeness_points.append(sklearn.metrics.completeness_score(y_true, y_pred))
-            V_measure5_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=0.5))
-            V_measure2_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=2))
-            V_measure1_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=1))
-            goodness_score = adjusted_rand_points[i] + V_measure1_points[i]
-            goodness_score_table.append(goodness_score)
-            y_pred_table.append(y_pred)
-            no_clusters = len(set(algorithm.labels_)) - (1 if -1 in algorithm.labels_ else 0)
-            no_clusters_table.append(no_clusters)
-            plt.plot([option, option],[0,1],color='grey', linestyle='--', linewidth=1)
-            plt.text(option, 0.075, str(no_clusters))
-            i += 1
-
-        plt.plot(esp_options, adjusted_rand_points, 'blue', label='adjusted rand')
-        plt.plot(esp_options, homogeneity_points, 'orange', label='homogenity')
-        plt.plot(esp_options, completeness_points, 'green', label='completeness')
-        plt.plot(esp_options, V_measure5_points, 'pink', label='V-measure (beta=0,5)')
-        plt.plot(esp_options, V_measure2_points, 'purple', label='V-measure (beta=2)')
-        plt.plot(esp_options, V_measure1_points, 'brown', label='V-measure (beta=1)')
-        plt.legend(loc="upper right")
-        plt.xlabel ('eps')
-        plt.title(files[set_no] + " DBSCAN")
-        plt.show()
-        
-
-        if "x" in files[set_no]:
-            min_goodness = min(goodness_score_table)
-            max_goodness = max(goodness_score_table)
-            shown_good = False
-            shown_bad = False
-            for j in range(len(goodness_score_table)):
-                if (not shown_bad) and goodness_score_table[j] == min_goodness:
-                    plot_voronoi_diagram(X, y_true, y_pred_table[j], "Worst case for DBSCAN of " + files[set_no] + " eps = " + str(esp_options[j]) + " number of clusters: " + str(no_clusters_table[j]))
-                    shown_bad = True
-                if (not shown_good) and goodness_score_table[j] == max_goodness:
-                    plot_voronoi_diagram(X, y_true, y_pred_table[j], "Best case for DBSCAN of " + files[set_no] + " eps = " + str(esp_options[j]) + " number of clusters: " + str(no_clusters_table[j]))
-                    shown_good = True
-        else:
-            max_goodness = max(goodness_score_table)
-            index = goodness_score_table.index(max_goodness)
-            print("For DBSCAN of " + files[set_no] + " best case was found to be eps = " + str(esp_options[index]) + " number of clusters: " + str(no_clusters_table[index]))
-
-
     #K-means
-        no_clusters = [2,3,4,5,6,7,8,9]
+        no_clusters = [2,3,4,5,6,7,8,9,10,11]
         adjusted_rand_points = []
         homogeneity_points = []
         completeness_points = []
@@ -259,9 +170,6 @@ if __name__ == "__main__":
             shown_good = False
             shown_bad = False
             for j in range(len(goodness_score_table)):
-                if (not shown_bad) and goodness_score_table[j] == min_goodness:
-                    plot_voronoi_diagram(X, y_true, y_pred_table[j], "Worst case for K Means of " + files[set_no] + " number of clusters: " + str(no_clusters[j]))
-                    shown_bad = True
                 if (not shown_good) and goodness_score_table[j] == max_goodness:
                     plot_voronoi_diagram(X, y_true, y_pred_table[j], "Best case for K Means of " + files[set_no] + " number of clusters: " + str(no_clusters[j]))
                     shown_good = True
@@ -269,4 +177,70 @@ if __name__ == "__main__":
             max_goodness = max(goodness_score_table)
             index = goodness_score_table.index(max_goodness)
             print("For K Means of " + files[set_no] + " best case was found to be " + str(no_clusters[index]) + " clusters ")
+
+        #continue
+    #DBSCAN
+        temp_esp_list = np.linspace(0.1, 1.1, 10, endpoint=False).tolist()
+        esp_options = [ round(elem, 2) for elem in temp_esp_list ]
+        adjusted_rand_points = []
+        homogeneity_points = []
+        completeness_points = []
+        V_measure5_points = []
+        V_measure1_points = []
+        V_measure2_points = []
+        goodness_score_table = []
+        y_pred_table = []
+        no_clusters_table = []
+        i = 0
+        for option in esp_options:
+            algorithm = DBSCAN(eps=option, min_samples=1)
+            algorithm.fit(X)
+            y_pred = algorithm.labels_.astype(int)
+            adjusted_rand_points.append(sklearn.metrics.adjusted_rand_score(y_true, y_pred))
+            homogeneity_points.append(sklearn.metrics.homogeneity_score(y_true, y_pred))
+            completeness_points.append(sklearn.metrics.completeness_score(y_true, y_pred))
+            V_measure5_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=0.5))
+            V_measure2_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=2))
+            V_measure1_points.append(sklearn.metrics.v_measure_score(y_true, y_pred, beta=1))
+            goodness_score = adjusted_rand_points[i] + V_measure1_points[i]
+            goodness_score_table.append(goodness_score)
+            y_pred_table.append(y_pred)
+            no_clusters = len(set(algorithm.labels_)) - (1 if -1 in algorithm.labels_ else 0)
+            no_clusters_table.append(no_clusters)
+            plt.plot([option, option],[0,1],color='grey', linestyle='--', linewidth=1)
+            plt.text(option, 0.075, str(no_clusters))
+            i += 1
+
+        plt.plot(esp_options, adjusted_rand_points, 'blue', label='adjusted rand')
+        plt.plot(esp_options, homogeneity_points, 'orange', label='homogenity')
+        plt.plot(esp_options, completeness_points, 'green', label='completeness')
+        plt.plot(esp_options, V_measure5_points, 'pink', label='V-measure (beta=0,5)')
+        plt.plot(esp_options, V_measure2_points, 'purple', label='V-measure (beta=2)')
+        plt.plot(esp_options, V_measure1_points, 'brown', label='V-measure (beta=1)')
+        plt.legend(loc="upper right")
+        plt.xlabel ('eps')
+        plt.title(files[set_no] + " DBSCAN (data was normalized)")
+        filen = "./plot_DBSCAN_" + str(set_no) + ".png"
+        #plt.savefig(filen)
+        plt.show()
+        
+
+        if "_2" in files[set_no]:
+            min_goodness = min(goodness_score_table)
+            max_goodness = max(goodness_score_table)
+            shown_good = False
+            shown_bad = False
+            
+            index = goodness_score_table.index(max_goodness)
+            print("For DBSCAN of " + files[set_no] + " best case was found to be eps = " + str(esp_options[index]) + " number of clusters: " + str(no_clusters_table[index]))
+            
+            for j in range(len(goodness_score_table)):
+                if (not shown_good) and goodness_score_table[j] == max_goodness:
+                    plot_voronoi_diagram(X, y_true, y_pred_table[j], "Best case for DBSCAN of " + files[set_no] + " eps = " + str(esp_options[j]) + " number of clusters: " + str(no_clusters_table[j]))
+                    shown_good = True
+        else:
+            max_goodness = max(goodness_score_table)
+            index = goodness_score_table.index(max_goodness)
+            print("For DBSCAN of " + files[set_no] + " best case was found to be eps = " + str(esp_options[index]) + " number of clusters: " + str(no_clusters_table[index]))
+
 

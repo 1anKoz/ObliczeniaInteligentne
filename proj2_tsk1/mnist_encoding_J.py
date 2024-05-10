@@ -188,16 +188,21 @@ if __name__ == "__main__":
     #test data
     ctr = 0
     for x in X_test:
+        temp = [central_symmetry_score(x), edge_density(x)]
         vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
         tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
         vector_8_ftrs.append(tmp)
+        print(str(ctr) + ":")
+        print(temp)
+        print(tmp)
+        print("------------")
         ctr = ctr + 1
-        #if(ctr == 10): break
+        if(ctr == 10): break
 
-    file_path = ".\encodings\J_enc_test_2_features.sav"
-    pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
-    file_path = ".\encodings\J_enc_test_8_features.sav"
-    pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
+    # file_path = ".\encodings\J_enc_test_2_features.sav"
+    # pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
+    # file_path = ".\encodings\J_enc_test_8_features.sav"
+    # pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
 
     # print("-----------------------------")
     # print(vector_2_ftrs)
@@ -208,22 +213,22 @@ if __name__ == "__main__":
     print("done test: " + str(ctr))
     
 
-    vector_2_ftrs = []
-    vector_8_ftrs = []
-    vector_784_ftrs = []
-    # train data
-    ctr = 0
-    for x in X_train:
-        vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
-        tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
-        vector_8_ftrs.append(tmp)
-        ctr = ctr + 1
-        #if(ctr == 10): break
+    # vector_2_ftrs = []
+    # vector_8_ftrs = []
+    # vector_784_ftrs = []
+    # # train data
+    # ctr = 0
+    # for x in X_train:
+    #     vector_2_ftrs.append([central_symmetry_score(x), edge_density(x)])
+    #     tmp = [central_symmetry_score(x), edge_density(x), horizontal_symmetry_score(x), vertical_symmetry_score(x), solidity(x), circularity(x), compactness(x), extent(x)]
+    #     vector_8_ftrs.append(tmp)
+    #     ctr = ctr + 1
+    #     if(ctr == 10): break
 
-    file_path = ".\encodings\J_enc_train_2_features.sav"
-    pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
-    file_path = ".\encodings\J_enc_train_8_features.sav"
-    pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
+    # file_path = ".\encodings\J_enc_train_2_features.sav"
+    # pickle.dump(vector_2_ftrs, open(file_path, 'wb'))
+    # file_path = ".\encodings\J_enc_train_8_features.sav"
+    # pickle.dump(vector_8_ftrs, open(file_path, 'wb'))
 
     # print("-----------------------------")
     # print(vector_2_ftrs)
@@ -232,4 +237,4 @@ if __name__ == "__main__":
     # print()
     # print("done test: " + str(ctr))
 
-    print("done train: " + str(ctr))
+    # print("done train: " + str(ctr))
