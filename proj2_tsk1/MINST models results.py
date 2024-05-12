@@ -69,19 +69,19 @@ if __name__ == "__main__":
     # files_test = [".\encodings\enc_test_784.sav", ".\encodings\enc_test_our.sav", ".\encodings\enc_test_2.sav"]
     # (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
 
-    files = [".\models\mdl_temp_0", ".\models\mdl_temp_1"]
-    files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
-    (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+    # files = [".\models\mdl_temp_0", ".\models\mdl_temp_1"]
+    # files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
+    # (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
 
-    # files = [".\models\iris_train"]
-    # files_test = [".\encodings\iris_test.sav"]
-    # X_train, X_test, Y_train, Y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
+    files = [".\models\iris_mdl"]
+    files_test = [".\encodings\iris_test.sav"]
+    X_train, X_test, Y_train, Y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
     
-    # files = [".\models\wine_train"]
+    # files = [".\models\wine_mdl"]
     # files_test = [".\encodings\wine_test.sav"]
     # X_train, X_test, Y_train, Y_test = train_test_split(load_wine().data, load_wine().target, test_size=0.2, random_state=42)
 
-    # files = [".\models\dwbc_train"]
+    # files = [".\models\dwbc_mdl"]
     # files_test = [".\encodings\dwbc_test.sav"]
     # X_train, X_test, Y_train, Y_test = train_test_split(load_breast_cancer().data, load_breast_cancer().target, test_size=0.2, random_state=42)
 

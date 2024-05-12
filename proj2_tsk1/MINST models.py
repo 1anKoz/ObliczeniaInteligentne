@@ -14,13 +14,13 @@ from sklearn.datasets import load_wine
 from sklearn.datasets import load_breast_cancer
 
 if __name__ == "__main__":
-    files = [".\encodings\J_enc_train_2_features.sav", ".\encodings\J_enc_train_8_features.sav"]
-    files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
-    (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+    # files = [".\encodings\J_enc_train_2_features.sav", ".\encodings\J_enc_train_8_features.sav"]
+    # files_test = [".\encodings\J_enc_test_2_features.sav", ".\encodings\J_enc_test_8_features.sav"]
+    # (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
 
-    # files = [".\encodings\iris_train.sav"]
-    # files_test = [".\encodings\iris_test.sav"]
-    #X_train, X_test, Y_train, Y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
+    files = [".\encodings\iris_train.sav"]
+    files_test = [".\encodings\iris_test.sav"]
+    X_train, X_test, Y_train, Y_test = train_test_split(load_iris().data, load_iris().target, test_size=0.2, random_state=42)
     
     # files = [".\encodings\wine_train.sav"]
     # files_test = [".\encodings\wine_test.sav"]

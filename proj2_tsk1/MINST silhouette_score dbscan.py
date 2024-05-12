@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # reading the data
     (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
-    X_test_2 = pickle.load(open(".\encodings\J_enc_train_8_features.sav", 'rb'))
+    X_test_2 = pickle.load(open(".\encodings\J_enc_train_2_features.sav", 'rb'))
     # /|\ zmieniać
     print("()()")
 
