@@ -87,7 +87,11 @@ if __name__ == "__main__":
 
     for set_no in range(len(files)):
         model = pickle.load(open(files[set_no], 'rb'))
-        model.eval()
+        # print()
+        # print(model)
+        # model.eval()
+        # print("****")
+        # print(model)
         result_np = []
         X_test = pickle.load(open(files_test[set_no], 'rb'))
         y_test = []
@@ -98,6 +102,7 @@ if __name__ == "__main__":
         X_test_tensor = torch.Tensor(X_test)
         with torch.no_grad():
             y_pred = model(X_test_tensor)
+            print(y_pred)
         _, predicted_class = torch.max(y_pred, 1)
 
         conf_mtrx_tst = confusion_matrix(y_test, predicted_class)
